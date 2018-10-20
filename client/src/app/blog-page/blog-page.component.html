@@ -1,0 +1,50 @@
+<div class="alert alert-dismissible alert-{{ alertMessage.type}}"
+     role="alert" *ngIf="alertMessage.message !== ''&& alertMessage.type !== '' " #alert>
+  <strong>{{ alertMessage.message }}</strong>
+  <button type="button" class="close" (click)="closeAlert(alert)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div *ngIf="blog; else loading">
+<!-- Page Header -->
+<header class="masthead" [appSetBackgroundImage]="blog.mainImage">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="post-heading">
+          <h1>{{ blog.title }}</h1>
+          <h2 class="subheading">{{ blog.subTitle }}</h2>
+          <span class="meta">Створено:
+                <a [routerLink]="['/authors/', blog.author]">{{ blog.authorInfo.firstName | titlecase }} {{blog.authorInfo.lastName | titlecase}}</a>
+                {{ blog.date | date: 'dd MMMM yyyy'}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto" [innerHtml]="blog.body">
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <a href="#">
+          <img class="img-fluid" [src]="blog.mainImage" alt="">
+        </a>
+        <span class="caption text-muted">To go places and do things that have never been done before – that’s what living is all about.</span>
+      </div>
+    </div>
+  </div>
+
+</article>
+</div>
+<ng-template #loading>
+  <app-loader></app-loader>
+</ng-template>
+

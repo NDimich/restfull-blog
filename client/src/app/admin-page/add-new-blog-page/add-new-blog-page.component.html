@@ -1,0 +1,61 @@
+<div class="alert alert-dismissible alert-{{ alertMessage.type}}"
+     role="alert" *ngIf="alertMessage.message !== ''&& alertMessage.type !== '' " #alert>
+  <strong>{{ alertMessage.message }}</strong>
+  <button type="button" class="close" (click)="closeAlert(alert)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="row d-flex" *ngIf="!load; else loading">
+  <div class="col-sm-12 col-lg-10 mx-auto">
+    <form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="title">Назва</label>
+        <input type="text" class="form-control" id="title" formControlName="title">
+      </div>
+      <div class="form-group">
+        <label for="subTitle">Додаткова назва</label>
+        <input type="text" class="form-control" id="subTitle" formControlName="subTitle">
+      </div>
+      <div class="form-group">
+        <label for="body">Текст</label>
+        <angular-editor id="body" formControlName="body" [config]="editorConfig"></angular-editor>
+      </div>
+      <div class="form-group row">
+        <div class="col">
+          <label for="author">Автор статті</label>
+          <select name="author" id="author" class="form-control" formControlName="author">
+            <option *ngFor="let author of authors" [value]="author._id" [selected]="!isNew ? this.form.get('author').value._id : ''">
+              {{ author.lastName | titlecase }} {{ author.firstName | titlecase }}
+            </option>
+          </select>
+        </div>
+        <div class="col">
+          <label for="category">Тема статті</label>
+          <select name="author" id="category" class="form-control" formControlName="category">
+            <option *ngFor="let category of categories" [value]="category._id" [selected]="!isNew ? this.form.get('author').value._id : ''">
+              {{ category.name | titlecase }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-12 col-lg-4">
+          <input type="file" hidden (change)="uploadImage($event)" #image>
+          <button class="btn btn-outline-secondary" type="button" (click)="triggerClick()">
+            вибрати зображення
+          </button>
+        </div>
+        <div class="col-12 col-lg-8" *ngIf="imagePreview">
+          <img class="img-fluid" [src]="imagePreview" alt="">
+        </div>
+        
+      </div>
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+        Додати статтю
+      </button>
+    </form>
+  </div>
+</div>
+<ng-template #loading>
+  <app-loader></app-loader>
+</ng-template>

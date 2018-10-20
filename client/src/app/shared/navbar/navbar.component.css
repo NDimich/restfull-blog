@@ -1,0 +1,22 @@
+.nav-item {
+  position: relative;
+}
+.dropdown-menu {
+  transform: translate3d(0px, 38px, 0px);
+  top: 0px;
+  left: 0px;
+  will-change: transform;
+  position: absolute;
+  background-color: transparent;
+  border: none;
+}
+.dropdown-menu > a {
+  color: #fff !important;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.dropdown-menu > a:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}

@@ -1,0 +1,32 @@
+<header class="masthead" style="background-image: url('../../assets/img/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 mx-auto">
+        <div class="site-heading">
+          <h3>Сторінка керування сайтом</h3>
+          <span class="subheading">Будьте уважні виконуючи будь-які дії!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 mx-auto">
+      <h4>Доступні дії</h4>
+      <p>
+        <a *ngFor="let action of adminActions"
+
+                class="btn btn-primary mr-1 mt-1"
+                [routerLink]="action.url" routerLinkActive="active">
+          {{ action.urlName }}
+        </a>
+      </p>
+      <hr>
+    </div>
+  </div>
+  <router-outlet></router-outlet>
+</div>
+  
+

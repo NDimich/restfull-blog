@@ -1,0 +1,77 @@
+<div class="alert alert-dismissible alert-{{ alertMessage.type}}"
+     role="alert" *ngIf="alertMessage.message !== ''&& alertMessage.type !== '' " #alert>
+  <strong>{{ alertMessage.message }}</strong>
+  <button type="button" class="close" (click)="closeAlert(alert)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="row d-flex">
+  <div class="col-12 col-lg-10 mx-auto mb-3">
+    <button class="btn btn-outline-secondary btn-sm float-right" (click)="addAuthor()">
+      додати автора
+    </button>
+  </div>
+</div>
+<div class="row d-flex" *ngIf="!load; else loading">
+  <div class="col-12 col-lg-10 mx-auto">
+    <table class="table table-hover table-sm" *ngIf="authors.length !==0; else empty">
+      <tr>
+        <th>#</th>
+        <th>Ім'я</th>
+        <th>Email</th>
+        <th>Photo</th>
+        <th></th>
+      </tr>
+      <tr *ngFor="let author of authors; index as i;">
+        <td class="align-middle">{{ i+1 }}</td>
+        <td class="align-middle">{{ author.lastName | titlecase}} {{ author.firstName | titlecase}}</td>
+        <td class="align-middle">{{ author.email }}</td>
+        <td class="align-middle">
+          <img [src]="author.photo" alt="" class="rounded-circle" *ngIf="author.photo">
+        </td>
+        <td class="align-middle">
+          <a class="btn mr-2" [routerLink]="['/admin/users', author._id]">
+            <i class="fa fa-3x fa-edit"></i>
+          </a>
+          <a href="#" class="btn mr-2" (click)="openModal(content, author, $event)">
+            <i class="fa fa-3x fa-trash"></i>
+          </a>
+        </td>
+      </tr>
+    </table>
+    <ng-template #empty>
+      <div class="col-md-10">
+        <h2>
+          Авторів поки не має :-(
+        </h2>
+      </div>
+    </ng-template>
+  </div>
+
+</div>
+<ng-template #loading>
+  <app-loader></app-loader>
+</ng-template>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Видалити автора
+      <span class="text-danger">{{authorToDelete.firstName}} {{authorToDelete.lastName}}?</span></h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12 text-center">
+        <span class="text-secondary">Увага! Цю дію не можливо буде відмінити!</span>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-2">
+      <div class="col-10">
+        <button class="btn btn-outline-danger float-left" (click)="deleteAuthor(authorToDelete)">Так</button>
+        <button class="btn btn-outline-secondary float-right" (click)="modalClose()">Ні</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

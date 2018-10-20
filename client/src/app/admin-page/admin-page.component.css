@@ -1,0 +1,10 @@
+.masthead {
+  max-height: 30vh;
+}
+.site-heading {
+  padding-top: 10vh !important;
+  padding-bottom: 10vh !important;
+}
+a {
+  text-decoration: none;
+}

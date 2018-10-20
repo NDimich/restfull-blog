@@ -1,0 +1,60 @@
+<div class="alert alert-dismissible alert-{{ alertMessage.type}}"
+     role="alert" *ngIf="alertMessage.message !== ''&& alertMessage.type !== '' " #alert>
+  <strong>{{ alertMessage.message }}</strong>
+  <button type="button" class="close" (click)="closeAlert(alert)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div *ngIf="!load; else loading">
+
+  <!-- Page Header -->
+  <header class="masthead" [appSetBackgroundImage]="null">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="site-heading">
+            <h1>Увійти</h1>
+            <span class="subheading">Лише для авторів! Заповніть поля форми щоб увійти.</span>
+            <span class="subheading">Бажаєш долучитись до команди авторів?
+              <a [routerLink]="['/signup']">тисни тут</a></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email" aria-describedby="emailHelp"
+              placeholder="Введіть email"
+              formControlName="email"
+            >
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password"
+                   class="form-control"
+                   id="password"
+                   placeholder="Пароль"
+                   formControlName="password"
+            >
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Увійти</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+<ng-template #loading>
+  <app-loader></app-loader>
+</ng-template>

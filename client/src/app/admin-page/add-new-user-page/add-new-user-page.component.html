@@ -1,0 +1,81 @@
+<div class="alert alert-dismissible alert-{{ alertMessage.type}}"
+     role="alert" *ngIf="alertMessage.message !== ''&& alertMessage.type !== '' " #alert>
+  <strong>{{ alertMessage.message }}</strong>
+  <button type="button" class="close" (click)="closeAlert(alert)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="row d-flex" *ngIf="!load; else loading">
+  <div class="col-sm-12 col-lg-10 mx-auto">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-group">
+        <label for="first">Ім'я</label>
+        <input type="text" class="form-control" id="first" placeholder="Введіть ім'я автора"
+               name="firstName" formControlName="firstName"
+               [ngClass]="{'is-invalid': form.get('firstName').invalid && form .get('firstName').touched,
+                        'is-valid': form.get('firstName').valid}"
+        >
+        <div *ngIf="form.get('firstName').invalid && form .get('firstName').touched" class="invalid-feedback">
+          Заповніть поле.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="second">Прізвище</label>
+        <input type="text" class="form-control" id="second" placeholder="Введіть прізвище автора"
+               name="lastName" formControlName="lastName"
+               [ngClass]="{'is-invalid': form.get('lastName').invalid && form .get('lastName').touched,
+                        'is-valid': form.get('lastName').valid}"
+        >
+        <div class="invalid-feedback" *ngIf="form.get('lastName').invalid && form.get('lastName').touched">
+          Заповніть поле.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="authorEmail">Едектронна пошта</label>
+        <input type="email" name="email" id="authorEmail" placeholder="Email" class="form-control"
+               formControlName="email"
+               [ngClass]="{'is-invalid': form.get('email').invalid && (form.get('email').touched || form.get('email').dirty),
+                        'is-valid': form.get('email').valid}"
+        >
+        <div class="invalid-feedback" *ngIf="form.get('email').invalid && (form.get('email').touched || form.get('email').dirty)">
+          Заповніть поле.
+        </div>
+        <div class="invalid-feedback" *ngIf="form.get('email').errors?.email">
+            Введіть корректний email.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password"
+               id="password"
+               name="password"
+               formControlName="password"
+               placeholder="Пароль"
+               class="form-control"
+               [ngClass]="{'is-invalid': form.get('password').invalid && form.get('password').touched,
+                        'is-valid': form.get('password').valid}"
+        >
+        <div class="invalid-feedback" *ngIf="form.get('password').invalid && (form.get('password').touched || form.get('password').dirty)">
+          Заповніть поле.
+        </div>
+        <div class="invalid-feedback" *ngIf="form.get('password').errors?.minlength">
+          Довжина паролю мінімум {{form.get('password').errors['minlength']['requiredLength']}} символи. Введено {{form.get('password').errors['minlength']['actualLength']}}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="photo">Фото автора</label>
+        <input type="file" hidden (change)="uploadImage($event)" #authorPhoto>
+        <button type="button" id="photo" class="form-control btn btn-outline-secondary btn-sm" (click)="triggerClick()">
+          Завантажити фото
+        </button>
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Додати</button>
+    </form>
+  </div>
+  <div class="col-sm-12 col-lg-2">
+    <img [src]="imagePreview" *ngIf="imagePreview" class="img-thumbnail rounded-circle mx-auto d-block">
+  </div>
+</div>
+<ng-template #loading>
+  <app-loader></app-loader>
+</ng-template>
