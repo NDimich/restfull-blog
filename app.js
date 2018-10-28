@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const passport = require('passport');
 const mongoose = require('mongoose');
 const keys = require('./config/keys');
 
@@ -17,6 +18,10 @@ const authRoute = require('./routes/auth');
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
+app.use(passport.initialize());
+require('./middleware/passport')(passport);
+
 
 app.use('/uploads', express.static('uploads'), uploadsRoute);
 app.use('/api/blogs', blogsRoute);

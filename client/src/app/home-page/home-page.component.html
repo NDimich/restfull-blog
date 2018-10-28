@@ -1,14 +1,8 @@
-<div class="alert alert-dismissible alert-{{ alertMessage.type}}"
-     role="alert" *ngIf="alertMessage.message !== ''&& alertMessage.type !== '' " #alert>
-  <strong>{{ alertMessage.message }}</strong>
-  <button type="button" class="close" (click)="closeAlert(alert)">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
+
 <div *ngIf="!load; else loading">
 
   <!-- Page Header -->
-  <header class="masthead" [appSetBackgroundImage]="blogs[0].mainImage ? blogs[0].mainImage : null ">
+  <header class="masthead" [appSetBackgroundImage]="blogs[0]?.mainImage ? blogs[0].mainImage : null ">
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
@@ -21,6 +15,14 @@
       </div>
     </div>
   </header>
+  <!--Notifications-->
+  <div class="alert alert-dismissible alert-{{ alertMessage.type}}"
+       role="alert" *ngIf="alertMessage.message !== ''&& alertMessage.type !== '' " #alert>
+    <strong>{{ alertMessage.message }}</strong>
+    <button type="button" class="close" (click)="closeAlert(alert)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
 
   <div *ngIf="blogs.length !==0; else empty">
     <!-- Main Content -->

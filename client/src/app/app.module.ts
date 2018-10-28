@@ -9,7 +9,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomePageComponent } from './home-page/home-page.component';
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import { LoaderComponent } from './shared/loader/loader.component';
 import { BlogPageComponent } from './blog-page/blog-page.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
@@ -24,6 +24,8 @@ import {AngularEditorModule} from "@kolkov/angular-editor";
 import { SetBackgroundImageDirective } from './directives/set-background-image.directive';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { SignupPageComponent } from './signup-page/signup-page.component';
+import { LogoutPageComponent } from './logout-page/logout-page.component';
+import {TokenInterceptor} from "./services/token.interceptor";
 
 
 
@@ -44,7 +46,8 @@ import { SignupPageComponent } from './signup-page/signup-page.component';
     AddNewBlogPageComponent,
     SetBackgroundImageDirective,
     LoginPageComponent,
-    SignupPageComponent
+    SignupPageComponent,
+    LogoutPageComponent
   ],
   imports: [
     BrowserModule,
@@ -56,7 +59,11 @@ import { SignupPageComponent } from './signup-page/signup-page.component';
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    multi: true,
+    useClass: TokenInterceptor
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

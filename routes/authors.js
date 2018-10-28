@@ -2,15 +2,16 @@ const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/authors');
 const upload = require('../middleware/upload');
+const passport = require('passport');
 
 router.get('/', controller.getAll);
 
 router.get('/:id', controller.getById);
 
-router.post('/', upload.single('photo'), controller.create);
+router.post('/', passport.authenticate('jwt', {session: false}), upload.single('photo'), controller.create);
 
-router.patch('/:id', upload.single('photo'), controller.update);
+router.patch('/:id', passport.authenticate('jwt', {session: false}), upload.single('photo'), controller.update);
 
-router.delete('/:id', controller.delete);
+router.delete('/:id', passport.authenticate('jwt', {session: false}), controller.delete);
 
 module.exports = router;

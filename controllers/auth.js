@@ -1,25 +1,38 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const Author = require('../models/Author');
 const saveAuthor = require('./authors');
+const key = require('../config/keys');
 
 module.exports.login = async function (req, res) {
   const candidate = await Author.findOne({email: req.body.email});
+  // user with such email found
   if(candidate) {
-    if(bcrypt.compareSync(req.body.password, candidate.password)) {
-      let author = {
-        firstName: candidate.firstName,
-        lastName: candidate.lastName,
-        isAdmin: candidate.isAdmin
-      };
-      res.status(200).json({author: author, success: true});
+    // check if user is active
+    if(candidate.isActive === true) {
+      //check password
+      if(bcrypt.compareSync(req.body.password, candidate.password)) {
+
+        const token = jwt.sign({
+              email: candidate.email,
+              userId: candidate._id
+            }, key.jwt, {expiresIn: 60*60*3});
+
+        res.status(200).json({token: `Bearer ${token}`, isAdmin: candidate.isAdmin});
+
+      } else {
+        res.status(403).json({
+          message: 'Доступ заборонено', success: false
+        });
+      }
     } else {
-      res.status(401).json({
+      res.status(403).json({
         message: 'Доступ заборонено', success: false
       });
     }
   } else {
     res.status(404).json({
-      message: 'Доступ заборонено', success: false
+      message: 'Користувача не знайдено', success: false
     })
   }
 };

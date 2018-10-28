@@ -3,8 +3,10 @@ import {AlertMessage, Author} from "../interfaces/interfaces";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AngularEditorConfig} from "@kolkov/angular-editor";
 import {AuthorService} from "../services/author.service";
-import {debounceTime, distinct, distinctUntilChanged, mergeAll, mergeMap, take} from "rxjs/operators";
+import {debounceTime, distinct, distinctUntilChanged, mapTo, mergeAll, mergeMap, take} from "rxjs/operators";
 import {fromEvent, Observable, of} from "rxjs";
+import {HttpErrorResponse} from "@angular/common/http";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-signup-page',
@@ -49,7 +51,7 @@ export class SignupPageComponent implements OnInit {
     ]
   };
 
-  constructor(private authorService: AuthorService) { }
+  constructor(private authorService: AuthorService, private router: Router) { }
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -72,14 +74,12 @@ export class SignupPageComponent implements OnInit {
   emailExist(email: FormControl): Promise<any> {
     return new Promise<any>((resolve) => {
       email.valueChanges.pipe(
-        distinctUntilChanged(),
-        debounceTime(1500),
+        debounceTime(1000),
         mergeMap(
           (value: any) => this.authorService.getByEmail(value)
-        )
+        ),
       ).subscribe(
         (data) => {
-          console.log(data);
           if (data.length > 0) {
             resolve({emailExist: true})
           } else {
@@ -88,21 +88,28 @@ export class SignupPageComponent implements OnInit {
         }
       )
     })
-    /*return new Promise<any>((resolve) => {
-
-      this.authorService.getByEmail(email.value).subscribe(
-        (author: Author[]) => {
-          if(author.length > 0) {
-            resolve({emailExist: true})
-          } else {
-            resolve(null)
-          }
-        }
-      )
-    })*/
   }
   onSubmit() {
-    console.log(this.form)
+    this.form.disable();
+    const candidate = this.form.value;
+    const photo = this.image;
+    this.authorService.createAuthor(candidate, photo).subscribe(
+      (data: Author) => {
+        this.form.reset({
+          firstName: '',
+          lastName: '',
+          email: ''
+        });
+        this.form.enable();
+        this.router.navigate(['/'], {queryParams: {userCreated: true}});
+      },
+      (error: HttpErrorResponse) => {
+        this.alertMessage ={
+          message: error.error.message ? error.error.message : 'Виникла помилка, спробуйте пізніше.',
+          type: 'warning'
+        }
+      }
+    )
   }
   triggerClick() {
     this.photoRef.nativeElement.click();

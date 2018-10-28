@@ -1,10 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CategoryService} from "../../services/category.service";
 import {Category} from "../../interfaces/interfaces";
-import {Subscription} from "rxjs";
-
-
-
+import {combineLatest, Subscription} from "rxjs";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-navbar',
@@ -19,17 +17,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
   subscription: Subscription[] = [];
 
   links = [
-    {url: '', name: 'головна'},
-    {url: '', name: 'теми', children: []},
-    {url: '/login', name: 'увійти'},
-    {url: '/admin', name: 'адмінка'}
+    {url: '', name: 'головна', display: true},
+    {url: '', name: 'теми', children: [], display: true},
+    {url: '/login', name: 'увійти', display: true},
+    {url: '/admin', name: 'адмінка', display: false},
+    {url: '/logout', name: 'вийти', display: false}
   ];
 
-  constructor(private  categoryService: CategoryService) { }
+
+  constructor(private  categoryService: CategoryService, private authService: AuthService) { }
 
   ngOnInit() {
-    //todo: show menu admin if author is logged in
-
     this.subscription.push(
         this.categoryService.getAll().subscribe(
             (data: Category[]) => {
@@ -43,6 +41,29 @@ export class NavbarComponent implements OnInit, OnDestroy {
             }
         )
     );
+
+    this.subscription.push(
+      combineLatest(
+        this.authService.getToken(),
+        this.authService.getAdmin()
+      ).subscribe(
+        (data: [string, boolean]) => {
+          if(data[0] !== null && data[1] !== null) {
+            this.links.find(v => v.url === '/login').display = false;
+            this.links.find(v => v.url === '/admin').display = true;
+            this.links.find(v => v.url === '/logout').display = true;
+          }
+          else if(data[0] === null && data[1] === false) {
+            this.links.find(v => v.url === '/logout').display = false;
+            this.links.find(v => v.url === '/admin').display = false;
+            this.links.find(v => v.url === '/login').display = true;
+          }
+
+        }
+      )
+    );
+
+
 
   }
   ngOnDestroy(): void {
@@ -58,5 +79,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.showDropdown = false;
     }, 1000)
   }
+
+
+
 
 }

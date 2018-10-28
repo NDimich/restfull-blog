@@ -1,41 +1,56 @@
 import { Injectable } from '@angular/core';
-import {Author} from "../interfaces/interfaces";
-import {Observable, Subject} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {tap} from "rxjs/operators";
-import {Router} from "@angular/router";
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private _author = new Subject<Author | null>();
+  // private _author = new Subject<Author | null>();
+  private _token = new BehaviorSubject<string | null>(null);
+  private _isAdmin = new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpClient, private router: Router) { }
 
-  logIn(data: {email, password}): Observable<any> {
-    return this.http.post('/api/auth/login', data).pipe(
+
+  constructor(private http: HttpClient) { }
+
+  logIn(data: {email, password}): Observable<{token: string, isAdmin: boolean}> {
+    return this.http.post<{token: string, isAdmin: boolean}>('/api/auth/login', data).pipe(
       tap(
         (data) => {
-          if(data.success) {
-            this._author.next(data.author);
-
-          } else {
-            this.router.navigate(['/'])
-          }
+          localStorage.setItem('auth-token', data.token);
+          this.setToken(data.token);
+          this.setAdmin(data.isAdmin);
         },
         (error: HttpErrorResponse) => {
-          //todo redirect with warning message
-          this.router.navigate(['/']);
+          this.setToken(null);
+          this.setAdmin(false);
         }
       )
     );
   }
   logOut() {
-    this._author.next(null);
+    this.setToken(null);
+    this.setAdmin(false);
+    localStorage.clear();
   }
-  getCurrentAuthor() {
-    return this._author.asObservable();
+  private setToken(token: string) {
+    this._token.next(token);
   }
+  private setAdmin(admin: boolean) {
+    this._isAdmin.next(admin)
+  }
+  getToken(): Observable<string> {
+    return this._token;
+  }
+  getAdmin(): Observable<boolean> {
+    return this._isAdmin;
+  }
+  isAuthenticated(): boolean {
+    return !!this._token.value;
+  }
+
 }

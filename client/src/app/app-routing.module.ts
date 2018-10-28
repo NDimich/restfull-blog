@@ -11,14 +11,17 @@ import {AddNewCategoryPageComponent} from "./admin-page/add-new-category-page/ad
 import {AddNewBlogPageComponent} from "./admin-page/add-new-blog-page/add-new-blog-page.component";
 import {LoginPageComponent} from "./login-page/login-page.component";
 import {SignupPageComponent} from "./signup-page/signup-page.component";
+import {LogoutPageComponent} from "./logout-page/logout-page.component";
+import {AuthGuard} from "./services/auth.guard";
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
   {path: 'login', component: LoginPageComponent},
+  {path: 'logout', component: LogoutPageComponent},
   {path: 'signup', component: SignupPageComponent},
   {path: 'blogs/:id', component: BlogPageComponent},
   {path: 'blogs',component: HomePageComponent},
-  {path: 'admin', component: AdminPageComponent, children: [
+  {path: 'admin', component: AdminPageComponent, canActivate: [AuthGuard], children: [
       {path: 'users', component: UsersPageComponent},
       {path: 'categories', component: CategoriesPageComponent},
       {path: 'categories/:id', component: AddNewCategoryPageComponent},

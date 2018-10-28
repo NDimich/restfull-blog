@@ -3,6 +3,7 @@ import {AlertMessage} from "../interfaces/interfaces";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../services/auth.service";
 import {HttpErrorResponse} from "@angular/common/http";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login-page',
@@ -15,7 +16,7 @@ export class LoginPageComponent implements OnInit {
   load = false;
   form: FormGroup;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -26,11 +27,13 @@ export class LoginPageComponent implements OnInit {
   onSubmit() {
     this.authService.logIn(this.form.value).subscribe(
       (data) => {
-        console.log(data);
-        //todo redirect with success message to page where user have been
+        this.router.navigate(['/'], {queryParams: {loggedIn: true}})
       },
       (error: HttpErrorResponse) => {
-        //todo show error alert
+        this.alertMessage = {
+          message: `Доступ заборонено ${error.error.message}`,
+          type: 'warning'
+        }
       }
     )
   }

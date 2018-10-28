@@ -29,6 +29,24 @@ export class HomePageComponent implements OnInit, OnDestroy {
                 (params) => {
                   if(params['category']) {
                     return  this.blogService.getByCatId(params['category']);
+                  } else if(params['userCreated']) {
+                    this.alertMessage = {
+                      message: 'Заявку успішно подано. Чекайте на відповідь.',
+                      type: 'success'
+                    };
+                    return this.blogService.getAll();
+                  } else if(params['loggedIn']) {
+                    this.alertMessage = {
+                      message: 'Ви увійшли на сайт.',
+                      type: 'success'
+                    };
+                    return this.blogService.getAll();
+                  } else if(params['accessDenied']) {
+                    this.alertMessage = {
+                      message: 'Доступ заборонено. Авторизуйтесь.',
+                      type: 'warning'
+                    };
+                    return this.blogService.getAll();
                   } else {
                     return this.blogService.getAll();
                   }
